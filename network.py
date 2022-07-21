@@ -26,20 +26,24 @@ class Net(nn.Module):
 
         # Input is [B, 3, 64, 64]
         self.convolutions = nn.Sequential( 
-            nn.Conv2d(3, 4, 3, padding=1), # [B, 4, 64, 64]
-            nn.ReLU(inplace=True), # [B, 4, 64, 64]
-            nn.MaxPool2d(2, 2), # [B, 4, 32, 32]
+            nn.Conv2d(3, 32, 3, padding=1), # [B, 32, 64, 64]
+            nn.ReLU(inplace=True), # [B, 32, 64, 64]
+            nn.MaxPool2d(2, 2), # [B, 32, 32, 32]
             #==============================================================
-            nn.Conv2d(4, 8, 3, padding=1), # [B, 8, 32, 32]
-            nn.ReLU(inplace=True), # [B, 8, 32, 32]
-            nn.MaxPool2d(2, 2), # [B, 8, 16, 16]
+            nn.Conv2d(32, 64, 3, padding=1), # [B, 64, 32, 32]
+            nn.ReLU(inplace=True), # [B, 64, 32, 32]
+            nn.MaxPool2d(2, 2), # [B, 64, 16, 16]
+            #==============================================================
+            nn.Conv2d(64, 128, 3, padding=1), # [B, 128, 16, 16]
+            nn.ReLU(inplace=True), # [B, 128, 16, 16]
+            nn.MaxPool2d(2, 2), # [B, 128, 8, 8]
         )
 
-        # Input will be reshaped from [B, 8, 16, 16] to [B, 8*16*16] for fully connected layers
+        # Input will be reshaped from [B, 128, 8, 8] to [B, 128*8*8] for fully connected layers
         self.fully_connected = nn.Sequential(
-            nn.Linear(8*16*16, 32), # [B, 32]
-            nn.ReLU(inplace=True), # [B, 32]
-            nn.Linear(32, n_classes), # [B, n_classes]
+            nn.Linear(128*8*8, 64), # [B, 64]
+            nn.ReLU(inplace=True), # [B, 64]
+            nn.Linear(64, n_classes), # [B, n_classes]
         )
 
         # Note: the final output must have shape [B, n_classes]
